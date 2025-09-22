@@ -54,7 +54,7 @@ public class WheelBlockEntityRenderer extends AnimatableBlockEntityRenderer<Whee
     @Override
     public void render(WheelBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
         matrices.translate(0, 0.3f, .5f);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((TMMClient.gameComponent.getGameTime() + tickDelta) * (TMMClient.getTrainSpeed() * .9f)));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees((TMMClient.trainComponent.getTime() + tickDelta) * (TMMClient.getTrainSpeed() * .9f)));
         super.render(entity, tickDelta, matrices, vertexConsumers, light, overlay);
     }
 

@@ -4,12 +4,17 @@ import com.google.common.collect.Maps;
 import dev.doctor4t.ratatouille.client.util.OptionLocker;
 import dev.doctor4t.ratatouille.client.util.ambience.AmbienceUtil;
 import dev.doctor4t.ratatouille.client.util.ambience.BackgroundAmbience;
+import dev.doctor4t.ratatouille.client.util.ambience.BlockEntityAmbience;
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.block_entity.SprinklerBlockEntity;
 import dev.doctor4t.trainmurdermystery.cca.TMMComponents;
-import dev.doctor4t.trainmurdermystery.cca.WorldGameComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
 import dev.doctor4t.trainmurdermystery.client.gui.MoodRenderer;
 import dev.doctor4t.trainmurdermystery.client.gui.StoreRenderer;
 import dev.doctor4t.trainmurdermystery.client.model.TrainMurderMysteryEntityModelLayers;
+import dev.doctor4t.trainmurdermystery.client.render.block_entity.DrinkPlateBlockEntityRenderer;
+import dev.doctor4t.trainmurdermystery.client.render.block_entity.PlateBlockEntityRenderer;
 import dev.doctor4t.trainmurdermystery.client.render.block_entity.SmallDoorBlockEntityRenderer;
 import dev.doctor4t.trainmurdermystery.client.render.block_entity.WheelBlockEntityRenderer;
 import dev.doctor4t.trainmurdermystery.client.util.TMMItemTooltips;
@@ -31,6 +36,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.option.CloudRenderMode;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
@@ -54,9 +60,9 @@ public class TMMClient implements ClientModInitializer {
     private static float soundLevel = 0f;
     public static HandParticleManager handParticleManager;
     public static Map<PlayerEntity, Vec3d> particleMap;
-    private static float trainSpeed;
     private static boolean prevGameRunning;
-    public static WorldGameComponent gameComponent;
+    public static GameWorldComponent gameComponent;
+    public static TrainWorldComponent trainComponent;
 
     public static final Map<UUID, PlayerListEntry> PLAYER_ENTRIES_CACHE = Maps.newHashMap();
 
@@ -114,7 +120,9 @@ public class TMMClient implements ClientModInitializer {
                 TMMBlocks.GOLD_SPRINKLER,
                 TMMBlocks.GOLD_ORNAMENT,
                 TMMBlocks.WHEEL,
-                TMMBlocks.BARRIER_PANEL
+                TMMBlocks.BARRIER_PANEL,
+                TMMBlocks.PLATE,
+                TMMBlocks.DRINK_PLATE
         );
         BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getTranslucent(),
                 TMMBlocks.RHOMBUS_GLASS,
@@ -146,15 +154,24 @@ public class TMMClient implements ClientModInitializer {
                 TMMBlockEntities.WHEEL,
                 ctx -> new WheelBlockEntityRenderer(TMM.id("textures/entity/wheel.png"), ctx)
         );
+        BlockEntityRendererFactories.register(
+                TMMBlockEntities.PLATE,
+                PlateBlockEntityRenderer::new
+        );
+        BlockEntityRendererFactories.register(
+                TMMBlockEntities.DRINK_PLATE,
+                DrinkPlateBlockEntityRenderer::new
+        );
 
         // Ambience
         AmbienceUtil.registerBackgroundAmbience(new BackgroundAmbience(TMMSounds.AMBIENT_TRAIN_INSIDE, player -> isTrainMoving() && !isSkyVisibleAdjacent(player), 20));
         AmbienceUtil.registerBackgroundAmbience(new BackgroundAmbience(TMMSounds.AMBIENT_TRAIN_OUTSIDE, player -> isTrainMoving() && isSkyVisibleAdjacent(player), 20));
+        AmbienceUtil.registerBlockEntityAmbience(TMMBlockEntities.SPRINKLER, new BlockEntityAmbience(TMMSounds.BLOCK_SPRINKLER_RUN, 0.5f, blockEntity -> blockEntity instanceof SprinklerBlockEntity sprinklerBlockEntity && sprinklerBlockEntity.isPowered(), 10));
 
         // Caching components
         ClientTickEvents.START_WORLD_TICK.register(clientWorld -> {
-            trainSpeed = TMMComponents.TRAIN.get(clientWorld).getTrainSpeed();
             gameComponent = TMMComponents.GAME.get(clientWorld);
+            trainComponent = TMMComponents.TRAIN.get(clientWorld);
             var player = MinecraftClient.getInstance().player;
             if (player != null && player.age % 80 == 0) MoodRenderer.arrowProgress = 0f;
         });
@@ -164,7 +181,7 @@ public class TMMClient implements ClientModInitializer {
         OptionLocker.overrideOption("renderDistance", 32); // mfw 15 fps on a 3050 - Cup // haha 🫵 brokie - RAT // buy me a better one then - Cup // okay nvm I fixed it I was actually rendering a lot of empty chunks we didn't need my bad LMAO - RAT
         OptionLocker.overrideOption("showSubtitles", false);
         OptionLocker.overrideOption("autoJump", false);
-        OptionLocker.overrideOption("clouds", false);
+        OptionLocker.overrideOption("renderClouds", CloudRenderMode.OFF);
         OptionLocker.overrideSoundCategoryVolume("music", 0.0);
         OptionLocker.overrideSoundCategoryVolume("record", 0.1);
         OptionLocker.overrideSoundCategoryVolume("weather", 1.0);
@@ -193,7 +210,7 @@ public class TMMClient implements ClientModInitializer {
             prevGameRunning = gameComponent.isRunning();
 
             // Fade sound with game start / stop fade
-            WorldGameComponent component = TMMComponents.GAME.get(clientWorld);
+            GameWorldComponent component = TMMComponents.GAME.get(clientWorld);
             if (component.getFade() > 0) {
                 MinecraftClient.getInstance().getSoundManager().updateSoundVolume(SoundCategory.MASTER, MathHelper.map(component.getFade(), 0, TMMGameConstants.FADE_TIME, soundLevel, 0));
             } else {
@@ -250,11 +267,11 @@ public class TMMClient implements ClientModInitializer {
     }
 
     public static float getTrainSpeed() {
-        return trainSpeed;
+        return trainComponent.getTrainSpeed();
     }
 
     public static boolean isTrainMoving() {
-        return trainSpeed > 0;
+        return trainComponent != null && trainComponent.getTrainSpeed() > 0;
     }
 
     public static class CustomModelProvider implements ModelLoadingPlugin {

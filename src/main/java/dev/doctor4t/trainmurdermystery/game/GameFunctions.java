@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.PlayerStoreComponent;
 import dev.doctor4t.trainmurdermystery.cca.TMMComponents;
-import dev.doctor4t.trainmurdermystery.cca.WorldGameComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
+import dev.doctor4t.trainmurdermystery.cca.TrainWorldComponent;
 import dev.doctor4t.trainmurdermystery.entity.PlayerBodyEntity;
 import dev.doctor4t.trainmurdermystery.index.TMMEntities;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -71,18 +72,19 @@ public class GameFunctions {
     }
 
     public static void startGame(ServerWorld world) {
-        WorldGameComponent component = TMMComponents.GAME.get(world);
-        component.setGameStatus(WorldGameComponent.GameStatus.STARTING);
+        GameWorldComponent component = TMMComponents.GAME.get(world);
+        component.setGameStatus(GameWorldComponent.GameStatus.STARTING);
     }
 
     public static void stopGame(ServerWorld world) {
-        WorldGameComponent component = TMMComponents.GAME.get(world);
-        component.setGameStatus(WorldGameComponent.GameStatus.STOPPING);
+        GameWorldComponent component = TMMComponents.GAME.get(world);
+        component.setGameStatus(GameWorldComponent.GameStatus.STOPPING);
     }
 
     public static void initializeGame(ServerWorld world) {
-        TMMComponents.TRAIN.get(world).setTrainSpeed(130);
-        WorldGameComponent gameComponent = TMMComponents.GAME.get(world);
+        TrainWorldComponent trainComponent = TMMComponents.TRAIN.get(world);
+        trainComponent.setTrainSpeed(130);
+        GameWorldComponent gameComponent = TMMComponents.GAME.get(world);
 
         world.getGameRules().get(GameRules.KEEP_INVENTORY).set(true, world.getServer());
         world.getGameRules().get(GameRules.DO_WEATHER_CYCLE).set(false, world.getServer());
@@ -214,13 +216,14 @@ public class GameFunctions {
             body.discard();
         }
 
-        gameComponent.setGameStatus(WorldGameComponent.GameStatus.ACTIVE);
-        gameComponent.setGameTime(0);
+        gameComponent.setGameStatus(GameWorldComponent.GameStatus.ACTIVE);
+        trainComponent.setTime(0);
         gameComponent.sync();
     }
 
     public static void finalizeGame(ServerWorld world) {
-        TMMComponents.TRAIN.get(world).setTrainSpeed(0);
+        TrainWorldComponent trainComponent = TMMComponents.TRAIN.get(world);
+        trainComponent.setTrainSpeed(0);
         world.setTimeOfDay(6000);
 
         // reset train
@@ -244,8 +247,8 @@ public class GameFunctions {
         // reset game component
         var gameComponent = TMMComponents.GAME.get(world);
         gameComponent.resetRoleLists();
-        gameComponent.setGameStatus(WorldGameComponent.GameStatus.INACTIVE);
-        gameComponent.setGameTime(0);
+        gameComponent.setGameStatus(GameWorldComponent.GameStatus.INACTIVE);
+        trainComponent.setTime(0);
         gameComponent.sync();
     }
 

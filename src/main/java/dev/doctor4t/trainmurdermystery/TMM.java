@@ -67,7 +67,6 @@ public class TMM implements ModInitializer {
 // TODO: Make the detective drop the gun on killed
 // TODO: Players collide with each other
 // TODO: Louder footsteps
-// TODO: Barrier panels for lobby
 // TODO: Hitman item shop
 // TODO: - Explosive for clumped up people
 // TODO: - Poison

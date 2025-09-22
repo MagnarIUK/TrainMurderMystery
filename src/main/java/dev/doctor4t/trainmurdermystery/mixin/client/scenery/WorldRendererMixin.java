@@ -88,7 +88,7 @@ public abstract class WorldRendererMixin {
             int tileLength = 32 * chunkSize;
             int tileSize = tileLength * 3;
 
-            float time = TMMClient.gameComponent.getGameTime() + client.getRenderTickCounter().getTickDelta(true);
+            float time = TMMClient.trainComponent.getTime() + client.getRenderTickCounter().getTickDelta(true);
 
             boolean isTranslucent = renderLayer != RenderLayer.getTranslucent();
             while (isTranslucent ? objectListIterator.hasNext() : objectListIterator.hasPrevious()) {

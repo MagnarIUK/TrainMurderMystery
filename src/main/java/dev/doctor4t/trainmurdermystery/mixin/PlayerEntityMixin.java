@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import dev.doctor4t.trainmurdermystery.cca.PlayerMoodComponent;
 import dev.doctor4t.trainmurdermystery.cca.TMMComponents;
-import dev.doctor4t.trainmurdermystery.cca.WorldGameComponent;
+import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
 import dev.doctor4t.trainmurdermystery.game.TMMGameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
@@ -47,7 +47,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(method = "tickMovement", at = @At("HEAD"))
     public void tmm$limitSprint(CallbackInfo ci) {
-        WorldGameComponent gameComponent = TMMComponents.GAME.get(this.getWorld());
+        GameWorldComponent gameComponent = TMMComponents.GAME.get(this.getWorld());
         if (GameFunctions.isPlayerAliveAndSurvival((PlayerEntity) (Object) this) && !(gameComponent != null && gameComponent.getHitmen().contains(this.getUuid()))) {
             if (this.isSprinting()) {
                 sprintingTicks = Math.max(sprintingTicks - 1, 0);

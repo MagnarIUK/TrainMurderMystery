@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class WorldGameComponent implements AutoSyncedComponent, ClientTickingComponent, ServerTickingComponent {
+public class GameWorldComponent implements AutoSyncedComponent, ClientTickingComponent, ServerTickingComponent {
     private final World world;
 
     public enum GameStatus {
@@ -30,13 +30,11 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
     private GameStatus gameStatus = GameStatus.INACTIVE;
     private int fade = 0;
 
-    private int gameTime = 0;
-
     private List<UUID> hitmen = new ArrayList<>();
     private List<UUID> detectives = new ArrayList<>();
     private List<UUID> targets = new ArrayList<>();
 
-    public WorldGameComponent(World world) {
+    public GameWorldComponent(World world) {
         this.world = world;
     }
 
@@ -50,14 +48,6 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
 
     public void setFade(int fade) {
         this.fade = MathHelper.clamp(fade, 0, TMMGameConstants.FADE_TIME + TMMGameConstants.FADE_PAUSE);
-    }
-
-    public int getGameTime() {
-        return gameTime;
-    }
-
-    public void setGameTime(int gameTime) {
-        this.gameTime = gameTime;
     }
 
     public void setGameStatus(GameStatus gameStatus) {
@@ -144,7 +134,6 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
         this.setGameStatus(GameStatus.valueOf(nbtCompound.getString("GameStatus")));
 
         this.setFade(nbtCompound.getInt("Fade"));
-        this.setGameTime(nbtCompound.getInt("GameTime"));
 
         this.setTargets(uuidListFromNbt(nbtCompound, "Targets"));
         this.setHitmen(uuidListFromNbt(nbtCompound, "Hitmen"));
@@ -164,7 +153,6 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
         nbtCompound.putString("GameStatus", this.gameStatus.toString());
 
         nbtCompound.putInt("Fade", fade);
-        nbtCompound.putInt("GameTime", gameTime);
 
         nbtCompound.put("Targets", nbtFromUuidList(getTargets()));
         nbtCompound.put("Hitmen", nbtFromUuidList(getHitmen()));
@@ -207,7 +195,7 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
         ServerWorld serverWorld = (ServerWorld) this.world;
 
         if (serverWorld.getServer().getOverworld().equals(serverWorld)) {
-            WorldTrainComponent trainComponent = TMMComponents.TRAIN.get(serverWorld);
+            TrainWorldComponent trainComponent = TMMComponents.TRAIN.get(serverWorld);
 
             // spectator limits
             if (trainComponent.getTrainSpeed() > 0) {
@@ -256,12 +244,6 @@ public class WorldGameComponent implements AutoSyncedComponent, ClientTickingCom
     }
 
     private void tickCommon() {
-        if (isRunning()) {
-            gameTime++;
-        } else {
-            gameTime = 0;
-        }
-
         // fade and start / stop game
         if (this.getGameStatus() == GameStatus.STARTING || this.getGameStatus() == GameStatus.STOPPING) {
             this.setFade(fade+1);

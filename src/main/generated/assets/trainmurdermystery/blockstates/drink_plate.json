@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "trainmurdermystery:block/drink_plate",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "trainmurdermystery:block/drink_plate",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "trainmurdermystery:block/drink_plate"
+    },
+    "facing=west": {
+      "model": "trainmurdermystery:block/drink_plate",
+      "y": 90
+    }
+  }
+}

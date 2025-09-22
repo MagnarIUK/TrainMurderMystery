@@ -2,9 +2,7 @@ package dev.doctor4t.trainmurdermystery.index;
 
 import dev.doctor4t.ratatouille.util.registrar.BlockEntityTypeRegistrar;
 import dev.doctor4t.trainmurdermystery.TMM;
-import dev.doctor4t.trainmurdermystery.block_entity.SmallDoorBlockEntity;
-import dev.doctor4t.trainmurdermystery.block_entity.SprinklerBlockEntity;
-import dev.doctor4t.trainmurdermystery.block_entity.WheelBlockEntity;
+import dev.doctor4t.trainmurdermystery.block_entity.*;
 import net.minecraft.block.entity.BlockEntityType;
 
 public interface TMMBlockEntities {
@@ -15,6 +13,8 @@ public interface TMMBlockEntities {
     BlockEntityType<SmallDoorBlockEntity> SMALL_WOOD_DOOR = registrar.create("small_wood_door", BlockEntityType.Builder.create(SmallDoorBlockEntity::createWood, TMMBlocks.SMALL_WOOD_DOOR));
     BlockEntityType<SmallDoorBlockEntity> SMALL_TRAIN_DOOR = registrar.create("small_train_door", BlockEntityType.Builder.create(SmallDoorBlockEntity::createTrain, TMMBlocks.SMALL_TRAIN_DOOR));
     BlockEntityType<WheelBlockEntity> WHEEL = registrar.create("wheel", BlockEntityType.Builder.create(WheelBlockEntity::create, TMMBlocks.WHEEL));
+    BlockEntityType<PlateBlockEntity> PLATE = registrar.create("plate", BlockEntityType.Builder.create(PlateBlockEntity::create, TMMBlocks.PLATE));
+    BlockEntityType<DrinkPlateBlockEntity> DRINK_PLATE = registrar.create("drink_plate", BlockEntityType.Builder.create(DrinkPlateBlockEntity::create, TMMBlocks.DRINK_PLATE));
 
     static void initialize() {
         registrar.registerEntries();

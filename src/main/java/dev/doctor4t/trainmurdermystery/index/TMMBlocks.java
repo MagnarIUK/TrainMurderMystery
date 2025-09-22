@@ -219,6 +219,22 @@ public interface TMMBlocks {
     // Wheels
     Block WHEEL = registrar.createWithItem("wheel", new WheelBlock(AbstractBlock.Settings.copy(DARK_STEEL).nonOpaque().sounds(BlockSoundGroup.COPPER)), TMMItems.DECORATION_GROUP);
 
+    // Plate
+    Block PLATE = registrar.createWithItem("plate", new PlateBlock(
+            AbstractBlock.Settings.copy(Blocks.WHITE_GLAZED_TERRACOTTA)
+                    .nonOpaque()
+                    .sounds(BlockSoundGroup.GLASS)
+                    .breakInstantly()
+                    .noCollision()
+    ), TMMItems.DECORATION_GROUP);
+
+    Block DRINK_PLATE = registrar.createWithItem("drink_plate", new DrinkPlateBlock(
+            AbstractBlock.Settings.copy(Blocks.WHITE_GLAZED_TERRACOTTA)
+                    .nonOpaque()
+                    .sounds(BlockSoundGroup.GLASS)
+                    .breakInstantly()
+    ), TMMItems.DECORATION_GROUP);
+
     // Op
     Block BARRIER_PANEL = registrar.createWithItem("barrier_panel", new BarrierPanelBlock(AbstractBlock.Settings.copy(NAVY_STEEL_PANEL).strength(-1.0F, 3600000.8F).nonOpaque().sounds(BlockSoundGroup.STONE)));
 
