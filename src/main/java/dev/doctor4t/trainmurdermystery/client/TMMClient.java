@@ -291,7 +291,7 @@ public class TMMClient implements ClientModInitializer {
     }
 
     public static boolean isHitman() {
-        return gameComponent.getHitmen().contains(MinecraftClient.getInstance().player.getUuid());
+        return gameComponent != null && gameComponent.getHitmen().contains(MinecraftClient.getInstance().player.getUuid());
     }
 
     public static boolean shouldInstinctHighlight(Entity entityToHighlight) {

@@ -113,7 +113,7 @@ public class TMM implements ModInitializer {
 // TORECORD: New name display shows "psycho cohort" for other psychos, and instinct now shows other psychos instead of targets, game recognizes game, allowing them to scheme together
 // TORECORD: You'll notice the killer doesn't start with the knife or the lockpick, because ITEM SHOP. Idea is we're gonna give the killer a bunch of tools and you are free to play how you want! And there's gonna be a lot of options
 // TORECORD: - Fixing the knife (now with a kill indicator)
-// TODO: - Grenade for clumped up people (foils the grouping up cheese)
+// TORECORD: - Grenade for clumped up people (foils the grouping up cheese)
 //              Does not kill the hitman (idk they have shrapnel body armor or something)
 // TORECORD: - Poison (poisons the next food or drink item)
 // TORECORD: - Scorpion (poisons the next person sleeping in the bed)
@@ -129,7 +129,7 @@ public class TMM implements ModInitializer {
 // TORECORD: - Light turn off item + true darkness (increases the horror aspect + amazing scenario of lights turning off and someone being dead when they turn back on + blackout and psycho mode)
 //              True darkness doesn't work that well because of skylight seeping into the block, add a light barrier block that blocks it from entering
 //              Disable name renderer for the duration of the blackout to prevent people seeing in the dark
-// TODO: - Firecracker (luring people, shooting the gun in spectator often led to people rushing in from curiosity, allowing the hitman to manipulate players)
+// TORECORD: - Firecracker (luring people, shooting the gun in spectator often led to people rushing in from curiosity, allowing the hitman to manipulate players)
 // TODO: - Note (allows the hitman to leave messages, fun for encouraging the roleplay aspect)
 
 // TORECORD: Fixing the map
