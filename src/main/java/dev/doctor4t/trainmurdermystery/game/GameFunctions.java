@@ -141,7 +141,8 @@ public class GameFunctions {
             PlayerShopComponent.KEY.get(serverPlayerEntity).reset();
 
             // remove item cooldowns
-            serverPlayerEntity.getItemCooldownManager().entries.forEach((item, entry) -> serverPlayerEntity.getItemCooldownManager().remove(item));
+            var copy = new HashSet<>(serverPlayerEntity.getItemCooldownManager().entries.keySet());
+            for (var item : copy) serverPlayerEntity.getItemCooldownManager().remove(item);
         }
         gameComponent.resetKillerList();
         GameTimeComponent.KEY.get(world).reset();
