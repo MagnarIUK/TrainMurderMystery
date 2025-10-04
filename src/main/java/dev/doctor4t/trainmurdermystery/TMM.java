@@ -164,10 +164,6 @@ public class TMM implements ModInitializer {
 // TORECORD: Game start and end messages
 // TORECORD: Initial discovery mode
 
-// TODO: Fix doors counting as outisde
-// TODO: Fix left handed item poses
-
-
 // TODO: small video tutorial on how to play
 
 // POST VIDEO
