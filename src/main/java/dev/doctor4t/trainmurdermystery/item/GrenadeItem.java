@@ -32,7 +32,7 @@ public class GrenadeItem extends Item {
         }
 
         if (!user.isCreative()) {
-            user.getItemCooldownManager().set(this, GameConstants.ITEM_COOLDOWNS.get(this));
+//            user.getItemCooldownManager().set(this, GameConstants.ITEM_COOLDOWNS.get(this));
         }
 
         user.incrementStat(Stats.USED.getOrCreateStat(this));

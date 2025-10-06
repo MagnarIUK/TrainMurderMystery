@@ -74,7 +74,7 @@ public interface GameConstants {
     List<ShopEntry> SHOP_ENTRIES = List.of(
             new ShopEntry(TMMItems.KNIFE.getDefaultStack(), 100, ShopEntry.Type.WEAPON),
             new ShopEntry(TMMItems.REVOLVER.getDefaultStack(), 300, ShopEntry.Type.WEAPON),
-            new ShopEntry(TMMItems.GRENADE.getDefaultStack(), 600, ShopEntry.Type.WEAPON),
+            new ShopEntry(TMMItems.GRENADE.getDefaultStack(), 500, ShopEntry.Type.WEAPON),
             new ShopEntry(TMMItems.PSYCHO_MODE.getDefaultStack(), 250, ShopEntry.Type.WEAPON) {
                 @Override
                 public boolean onBuy(@NotNull PlayerEntity player) {

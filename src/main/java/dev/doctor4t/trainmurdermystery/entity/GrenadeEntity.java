@@ -40,7 +40,7 @@ public class GrenadeEntity extends ThrownItemEntity {
             world.spawnParticles(new ItemStackParticleEffect(ParticleTypes.ITEM, this.getDefaultItem().getDefaultStack()), this.getX(), this.getY() + .1f, this.getZ(), 100, 0, 0, 0, 1f);
 
             for (var player : world.getPlayers(serverPlayerEntity ->
-                            this.getBoundingBox().expand(5f).contains(serverPlayerEntity.getPos()) &&
+                            this.getBoundingBox().expand(3f).contains(serverPlayerEntity.getPos()) &&
                             GameFunctions.isPlayerAliveAndSurvival(serverPlayerEntity))) {
                 GameFunctions.killPlayer(player, true, this.getOwner() instanceof PlayerEntity playerEntity ? playerEntity : null);
             }

@@ -303,6 +303,7 @@ public class GameFunctions {
         var gameComponent = TMMComponents.GAME.get(world);
         gameComponent.resetKillerList();
         gameComponent.resetVigilanteList();
+        gameComponent.setGameMode(GameWorldComponent.GameMode.MURDER);
         gameComponent.setGameStatus(GameWorldComponent.GameStatus.INACTIVE);
         trainComponent.setTime(0);
         gameComponent.sync();
