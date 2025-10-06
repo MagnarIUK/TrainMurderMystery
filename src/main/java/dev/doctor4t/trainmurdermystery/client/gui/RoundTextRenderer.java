@@ -191,7 +191,6 @@ public class RoundTextRenderer {
                 }
                 welcomeTime--;
             }
-            endTime = 4;
             if (endTime > 0) {
                 if (endTime == END_DURATION - (GameConstants.FADE_TIME * 2)) {
                     if (player != null)
