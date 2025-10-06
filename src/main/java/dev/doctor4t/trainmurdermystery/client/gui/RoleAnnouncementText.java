@@ -1,11 +1,7 @@
 package dev.doctor4t.trainmurdermystery.client.gui;
 
-import dev.doctor4t.trainmurdermystery.cca.GameWorldComponent;
-import dev.doctor4t.trainmurdermystery.cca.TMMComponents;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +12,7 @@ public enum RoleAnnouncementText {
     CIVILIAN(0x36E51B),
     VIGILANTE(0x1B8AE5),
     KILLER(0xC13838),
-    LOOSE_END(0xC13838);
+    LOOSE_END(0x9F0000);
 
     public final int colour;
     public final Text roleText;
@@ -40,12 +36,12 @@ public enum RoleAnnouncementText {
         return this == KILLER ? CIVILIAN.winText : KILLER.winText;
     }
 
-    public @Nullable Text getEndText(GameFunctions.@NotNull WinStatus status) {
+    public @Nullable Text getEndText(GameFunctions.@NotNull WinStatus status, Text winner) {
         return switch (status) {
             case NONE -> null;
             case PASSENGERS, TIME -> this == KILLER ? this.getLoseText() : this.winText;
             case KILLERS -> this == KILLER ? this.winText : this.getLoseText();
-            case LOOSE_END -> Text.translatable("announcement.loose_ends.winner" , MinecraftClient.getInstance().player.getUuid().equals(TMMComponents.GAME.get(MinecraftClient.getInstance().world).getLooseEndWinner()));
+            case LOOSE_END -> Text.translatable("announcement.win." + LOOSE_END.name().toLowerCase(), winner).withColor(LOOSE_END.colour);
         };
     }
 }

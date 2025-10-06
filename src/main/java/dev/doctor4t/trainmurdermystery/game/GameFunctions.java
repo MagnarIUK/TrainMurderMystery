@@ -291,6 +291,7 @@ public class GameFunctions {
             PlayerPoisonComponent.KEY.get(player).reset();
             PlayerPsychoComponent.KEY.get(player).reset();
             PlayerNoteComponent.KEY.get(player).reset();
+            TrainVoicePlugin.resetPlayer(player.getUuid());
 
             player.changeGameMode(GameMode.ADVENTURE);
             var teleportTarget = new TeleportTarget(world, GameConstants.SPAWN_POS, Vec3d.ZERO, 90, 0, TeleportTarget.NO_OP);

@@ -35,40 +35,41 @@ public class RoundTextRenderer {
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     public static void renderHud(TextRenderer renderer, ClientPlayerEntity player, @NotNull DrawContext context) {
-        boolean isLooseEnds = TMMComponents.GAME.get(player.getWorld()).getGameMode() == GameWorldComponent.GameMode.LOOSE_ENDS;
+        var isLooseEnds = TMMComponents.GAME.get(player.getWorld()).getGameMode() == GameWorldComponent.GameMode.LOOSE_ENDS;
 
         if (welcomeTime > 0) {
             context.getMatrices().push();
             context.getMatrices().translate(context.getScaledWindowWidth() / 2f, context.getScaledWindowHeight() / 2f + 3.5, 0);
             context.getMatrices().push();
             context.getMatrices().scale(2.6f, 2.6f, 1f);
-            int color = isLooseEnds ? 0x9F0000 : 0xFFFFFF;
+            var color = isLooseEnds ? 0x9F0000 : 0xFFFFFF;
             if (welcomeTime <= 180) {
-                Text welcomeText = isLooseEnds ? Text.translatable("announcement.loose_ends.welcome") : role.welcomeText;
+                var welcomeText = isLooseEnds ? Text.translatable("announcement.loose_ends.welcome") : role.welcomeText;
                 context.drawTextWithShadow(renderer, welcomeText, -renderer.getWidth(welcomeText) / 2, -12, color);
             }
             context.getMatrices().pop();
             context.getMatrices().push();
             context.getMatrices().scale(1.2f, 1.2f, 1f);
             if (welcomeTime <= 120) {
-                Text premiseText = isLooseEnds ? Text.translatable("announcement.loose_ends.premise") : role.premiseText.apply(killers);
+                var premiseText = isLooseEnds ? Text.translatable("announcement.loose_ends.premise") : role.premiseText.apply(killers);
                 context.drawTextWithShadow(renderer, premiseText, -renderer.getWidth(premiseText) / 2, 0, color);
             }
             context.getMatrices().pop();
             context.getMatrices().push();
             context.getMatrices().scale(1f, 1f, 1f);
             if (welcomeTime <= 60) {
-                Text goalText = isLooseEnds ? Text.translatable("announcement.loose_ends.goal") : role.goalText.apply(targets);
+                var goalText = isLooseEnds ? Text.translatable("announcement.loose_ends.goal") : role.goalText.apply(targets);
                 context.drawTextWithShadow(renderer, goalText, -renderer.getWidth(goalText) / 2, 14, color);
             }
             context.getMatrices().pop();
             context.getMatrices().pop();
         }
         var game = TMMComponents.GAME.get(player.getWorld());
-        if (endTime > 0 && endTime < END_DURATION - (GameConstants.FADE_TIME * 2) && !game.isRunning() && game.getGameMode() == GameWorldComponent.GameMode.MURDER) {
+        if (endTime > 0 && endTime < END_DURATION - (GameConstants.FADE_TIME * 2) && !game.isRunning() && game.getGameMode() != GameWorldComponent.GameMode.DISCOVERY) {
             var roundEnd = GameRoundEndComponent.KEY.get(player.getWorld());
             if (roundEnd.getWinStatus() == GameFunctions.WinStatus.NONE) return;
-            var endText = role.getEndText(roundEnd.getWinStatus());
+            var winner = player.getWorld().getPlayerByUuid(game.getLooseEndWinner() == null ? UUID.randomUUID() : game.getLooseEndWinner());
+            var endText = role.getEndText(roundEnd.getWinStatus(), winner == null ? Text.empty() : winner.getDisplayName());
             if (endText == null) return;
             context.getMatrices().push();
             context.getMatrices().translate(context.getScaledWindowWidth() / 2f, context.getScaledWindowHeight() / 2f - 40, 0);
@@ -81,62 +82,90 @@ public class RoundTextRenderer {
             var winMessage = Text.translatable("game.win." + roundEnd.getWinStatus().name().toLowerCase().toLowerCase());
             context.drawTextWithShadow(renderer, winMessage, -renderer.getWidth(winMessage) / 2, -4, 0xFFFFFF);
             context.getMatrices().pop();
-            context.getMatrices().push();
-            context.getMatrices().scale(1f, 1f, 1f);
-            var vigilanteTotal = 1;
-            for (var entry : roundEnd.getPlayers()) if (entry.role() == RoleAnnouncementText.VIGILANTE) vigilanteTotal += 1;
-            context.drawTextWithShadow(renderer, RoleAnnouncementText.CIVILIAN.titleText, -renderer.getWidth(RoleAnnouncementText.CIVILIAN.titleText) / 2 - 60, 14, 0xFFFFFF);
-            context.drawTextWithShadow(renderer, RoleAnnouncementText.VIGILANTE.titleText, -renderer.getWidth(RoleAnnouncementText.VIGILANTE.titleText) / 2 + 50, 14, 0xFFFFFF);
-            context.drawTextWithShadow(renderer, RoleAnnouncementText.KILLER.titleText, -renderer.getWidth(RoleAnnouncementText.KILLER.titleText) / 2 + 50, 14 + 16 + 24 * ((vigilanteTotal) / 2), 0xFFFFFF);
-            context.getMatrices().pop();
-            var civilians = 0;
-            var vigilantes = 0;
-            var killers = 0;
-            for (var entry : roundEnd.getPlayers()) {
-                context.getMatrices().push();
-                context.getMatrices().scale(2f, 2f, 1f);
-                switch (entry.role()) {
-                    case CIVILIAN -> {
-                        context.getMatrices().translate(-60 + (civilians % 4) * 12, 14 + (civilians / 4) * 12, 0);
-                        civilians++;
-                    }
-                    case VIGILANTE -> {
-                        context.getMatrices().translate(7 + (vigilantes % 2) * 12, 14 + (vigilantes / 2) * 12, 0);
-                        vigilantes++;
-                    }
-                    case KILLER -> {
-                        context.getMatrices().translate(0, 8 + ((vigilanteTotal) / 2) * 12, 0);
-                        context.getMatrices().translate(7 + (killers % 2) * 12, 14 + (killers / 2) * 12, 0);
-                        killers++;
-                    }
-                }
-                var texture = getSkinTextures(entry.player().getName());
-                if (texture != null) {
-                    RenderSystem.enableBlend();
+            if (isLooseEnds) {
+                context.drawTextWithShadow(renderer, RoleAnnouncementText.LOOSE_END.titleText, -renderer.getWidth(RoleAnnouncementText.LOOSE_END.titleText) / 2, 14, 0xFFFFFF);
+                var looseEnds = 0;
+                for (var entry : roundEnd.getPlayers()) {
                     context.getMatrices().push();
-                    context.getMatrices().translate(8, 0, 0);
-                    var offColour = entry.wasDead() ? 0.4f : 1f;
-                    context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 8 / 64f, 16 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
-                    context.getMatrices().translate(-0.5, -0.5, 0);
-                    context.getMatrices().scale(1.125f, 1.125f, 1f);
-                    context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 40 / 64f, 48 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
+                    context.getMatrices().scale(2f, 2f, 1f);
+                    context.getMatrices().translate(((looseEnds % 6) - 3.5) * 12, 14 + (looseEnds / 6) * 12, 0);
+                    looseEnds++;
+                    var texture = getSkinTextures(entry.player().getName());
+                    if (texture != null) {
+                        RenderSystem.enableBlend();
+                        context.getMatrices().push();
+                        context.getMatrices().translate(8, 0, 0);
+                        var offColour = entry.wasDead() ? 0.4f : 1f;
+                        context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 8 / 64f, 16 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
+                        context.getMatrices().translate(-0.5, -0.5, 0);
+                        context.getMatrices().scale(1.125f, 1.125f, 1f);
+                        context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 40 / 64f, 48 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
+                        context.getMatrices().pop();
+                    }
+                    if (entry.wasDead()) {
+                        context.getMatrices().translate(13, 0, 0);
+                        context.getMatrices().scale(2f, 1f, 1f);
+                        context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 0, 0xE10000, false);
+                        context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 1, 0x550000, false);
+                    }
                     context.getMatrices().pop();
                 }
-                if (entry.wasDead()) {
-                    context.getMatrices().translate(13, 0, 0);
-                    context.getMatrices().scale(2f, 1f, 1f);
-                    context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 0, 0xE10000, false);
-                    context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 1, 0x550000, false);
+                context.getMatrices().pop();
+            } else {
+                var vigilanteTotal = 1;
+                for (var entry : roundEnd.getPlayers()) if (entry.role() == RoleAnnouncementText.VIGILANTE) vigilanteTotal += 1;
+                context.drawTextWithShadow(renderer, RoleAnnouncementText.CIVILIAN.titleText, -renderer.getWidth(RoleAnnouncementText.CIVILIAN.titleText) / 2 - 60, 14, 0xFFFFFF);
+                context.drawTextWithShadow(renderer, RoleAnnouncementText.VIGILANTE.titleText, -renderer.getWidth(RoleAnnouncementText.VIGILANTE.titleText) / 2 + 50, 14, 0xFFFFFF);
+                context.drawTextWithShadow(renderer, RoleAnnouncementText.KILLER.titleText, -renderer.getWidth(RoleAnnouncementText.KILLER.titleText) / 2 + 50, 14 + 16 + 24 * ((vigilanteTotal) / 2), 0xFFFFFF);
+                var civilians = 0;
+                var vigilantes = 0;
+                var killers = 0;
+                for (var entry : roundEnd.getPlayers()) {
+                    context.getMatrices().push();
+                    context.getMatrices().scale(2f, 2f, 1f);
+                    switch (entry.role()) {
+                        case CIVILIAN -> {
+                            context.getMatrices().translate(-60 + (civilians % 4) * 12, 14 + (civilians / 4) * 12, 0);
+                            civilians++;
+                        }
+                        case VIGILANTE -> {
+                            context.getMatrices().translate(7 + (vigilantes % 2) * 12, 14 + (vigilantes / 2) * 12, 0);
+                            vigilantes++;
+                        }
+                        case KILLER -> {
+                            context.getMatrices().translate(0, 8 + ((vigilanteTotal) / 2) * 12, 0);
+                            context.getMatrices().translate(7 + (killers % 2) * 12, 14 + (killers / 2) * 12, 0);
+                            killers++;
+                        }
+                    }
+                    var texture = getSkinTextures(entry.player().getName());
+                    if (texture != null) {
+                        RenderSystem.enableBlend();
+                        context.getMatrices().push();
+                        context.getMatrices().translate(8, 0, 0);
+                        var offColour = entry.wasDead() ? 0.4f : 1f;
+                        context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 8 / 64f, 16 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
+                        context.getMatrices().translate(-0.5, -0.5, 0);
+                        context.getMatrices().scale(1.125f, 1.125f, 1f);
+                        context.drawTexturedQuad(texture.texture(), 0, 8, 0, 8, 0, 40 / 64f, 48 / 64f, 8 / 64f, 16 / 64f, 1f, offColour, offColour, 1f);
+                        context.getMatrices().pop();
+                    }
+                    if (entry.wasDead()) {
+                        context.getMatrices().translate(13, 0, 0);
+                        context.getMatrices().scale(2f, 1f, 1f);
+                        context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 0, 0xE10000, false);
+                        context.drawText(renderer, "x", -renderer.getWidth("x") / 2, 1, 0x550000, false);
+                    }
+                    context.getMatrices().pop();
                 }
                 context.getMatrices().pop();
             }
-            context.getMatrices().pop();
         }
     }
 
     public static void tick() {
         if (MinecraftClient.getInstance().world != null && TMMComponents.GAME.get(MinecraftClient.getInstance().world).getGameMode() != GameWorldComponent.GameMode.DISCOVERY) {
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            var player = MinecraftClient.getInstance().player;
             if (welcomeTime > 0) {
                 switch (welcomeTime) {
                     case 200 -> {
@@ -162,6 +191,7 @@ public class RoundTextRenderer {
                 }
                 welcomeTime--;
             }
+            endTime = 4;
             if (endTime > 0) {
                 if (endTime == END_DURATION - (GameConstants.FADE_TIME * 2)) {
                     if (player != null)

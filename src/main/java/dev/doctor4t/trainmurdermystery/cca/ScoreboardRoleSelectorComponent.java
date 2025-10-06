@@ -47,6 +47,7 @@ public class ScoreboardRoleSelectorComponent implements AutoSyncedComponent {
             killerCount--;
             this.killerRounds.put(uuid, this.killerRounds.getOrDefault(uuid, 1) + 1);
         }
+        this.forcedKillers.clear();
         var map = new HashMap<ServerPlayerEntity, Float>();
         var total = 0f;
         for (var player : players) {
@@ -89,6 +90,7 @@ public class ScoreboardRoleSelectorComponent implements AutoSyncedComponent {
                 this.vigilanteRounds.put(player.getUuid(), this.vigilanteRounds.getOrDefault(player.getUuid(), 1) + 1);
             }
         }
+        this.forcedVigilantes.clear();
         var map = new HashMap<ServerPlayerEntity, Float>();
         var total = 0f;
         for (var player : players) {

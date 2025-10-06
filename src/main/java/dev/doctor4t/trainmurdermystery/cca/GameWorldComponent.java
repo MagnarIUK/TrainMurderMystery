@@ -1,5 +1,6 @@
 package dev.doctor4t.trainmurdermystery.cca;
 
+import com.mojang.authlib.GameProfile;
 import dev.doctor4t.trainmurdermystery.game.GameConstants;
 import dev.doctor4t.trainmurdermystery.game.GameFunctions;
 import net.minecraft.entity.player.PlayerEntity;
@@ -155,7 +156,7 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
     }
 
     public UUID getLooseEndWinner() {
-        return looseEndWinner;
+        return this.looseEndWinner;
     }
 
     public void setLooseEndWinner(UUID looseEndWinner) {
@@ -164,7 +165,7 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
     }
 
     @Override
-    public void readFromNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public void readFromNbt(@NotNull NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
         this.setGameMode(GameMode.valueOf(nbtCompound.getString("GameMode")));
 
         this.setGameStatus(GameStatus.valueOf(nbtCompound.getString("GameStatus")));
@@ -174,6 +175,12 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
 
         this.setKillers(uuidListFromNbt(nbtCompound, "Killers"));
         this.setVigilantes(uuidListFromNbt(nbtCompound, "Vigilantes"));
+
+        if (nbtCompound.contains("LooseEndWinner")) {
+            this.setLooseEndWinner(nbtCompound.getUuid("LooseEndWinner"));
+        } else {
+            this.setLooseEndWinner(null);
+        }
     }
 
     private ArrayList<UUID> uuidListFromNbt(NbtCompound nbtCompound, String listName) {
@@ -185,7 +192,7 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
     }
 
     @Override
-    public void writeToNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public void writeToNbt(@NotNull NbtCompound nbtCompound, RegistryWrapper.WrapperLookup wrapperLookup) {
         nbtCompound.putString("GameMode", gameMode.name());
 
         nbtCompound.putString("GameStatus", this.gameStatus.toString());
@@ -195,6 +202,8 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
 
         nbtCompound.put("Killers", nbtFromUuidList(getKillers()));
         nbtCompound.put("Vigilantes", this.nbtFromUuidList(this.getVigilantes()));
+
+        if (this.looseEndWinner != null) nbtCompound.putUuid("LooseEndWinner", this.looseEndWinner);
     }
 
     private NbtList nbtFromUuidList(List<UUID> list) {
@@ -303,7 +312,7 @@ public class GameWorldComponent implements AutoSyncedComponent, ClientTickingCom
                     }
 
                     if (playersLeft == 1) {
-                        setLooseEndWinner(lastPlayer.getUuid());
+                        this.setLooseEndWinner(lastPlayer.getUuid());
                         winStatus = GameFunctions.WinStatus.LOOSE_END;
                     }
                 }

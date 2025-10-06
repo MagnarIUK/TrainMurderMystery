@@ -41,9 +41,11 @@ public class TMMLangGen extends FabricLanguageProvider {
         builder.add("announcement.role.civilian", "Civilian!");
         builder.add("announcement.role.vigilante", "Vigilante!");
         builder.add("announcement.role.killer", "Killer!");
+        builder.add("announcement.role.loose_end", "Loose End!");
         builder.add("announcement.title.civilian", "Civilians");
         builder.add("announcement.title.vigilante", "Vigilantes");
         builder.add("announcement.title.killer", "Killers");
+        builder.add("announcement.title.loose_end", "Loose Ends");
 
         builder.add("announcement.welcome", "Welcome aboard %s");
         builder.add("announcement.premise", "There is a killer aboard the train.");
@@ -57,6 +59,7 @@ public class TMMLangGen extends FabricLanguageProvider {
         builder.add("announcement.win.civilian", "Passengers Win!");
         builder.add("announcement.win.vigilante", "Passengers Win!");
         builder.add("announcement.win.killer", "Killers Win!");
+        builder.add("announcement.win.loose_end", "%s Wins!");
         builder.add("announcement.loose_ends.welcome", "Welcome aboard... Loose End.");
         builder.add("announcement.loose_ends.premise", "Everybody on the train has a derringer and a knife.");
         builder.add("announcement.loose_ends.goal", "Tie all loose ends before they tie you. Good luck.");
@@ -105,6 +108,7 @@ public class TMMLangGen extends FabricLanguageProvider {
         builder.add("game.win.killers", "The killers reached their kill count, they win!");
         builder.add("game.win.passengers", "All killers were eliminated: the passengers win!");
         builder.add("game.win.time", "The killers ran out of time: the passengers win!");
+        builder.add("game.win.loose_end", "They tied all of their loose ends!");
 
         builder.add("key.trainmurdermystery.instinct", "Instinct");
         builder.add("category.trainmurdermystery.keybinds", "Train Murder Mystery");
