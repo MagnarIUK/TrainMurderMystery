@@ -53,6 +53,7 @@ public class TMM implements ModInitializer {
             SetTrainSpeedCommand.register(dispatcher);
             StartCommand.register(dispatcher);
             StopCommand.register(dispatcher);
+            CheckWeightsCommand.register(dispatcher);
             ResetWeightsCommand.register(dispatcher);
             SetVisualCommand.register(dispatcher);
             ForceRoleCommand.register(dispatcher);

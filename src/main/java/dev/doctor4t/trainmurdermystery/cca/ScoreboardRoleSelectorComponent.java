@@ -1,6 +1,7 @@
 package dev.doctor4t.trainmurdermystery.cca;
 
 import dev.doctor4t.trainmurdermystery.TMM;
+import dev.doctor4t.trainmurdermystery.client.gui.RoleAnnouncementText;
 import dev.doctor4t.trainmurdermystery.index.TMMItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -8,8 +9,12 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.ladysnake.cca.api.v3.component.ComponentKey;
@@ -37,6 +42,63 @@ public class ScoreboardRoleSelectorComponent implements AutoSyncedComponent {
         this.killerRounds.clear();
         this.vigilanteRounds.clear();
         return count;
+    }
+
+    public void checkWeights(@NotNull ServerCommandSource source) {
+        var killerTotal = 0d;
+        var vigilanteTotal = 0d;
+        for (var player : source.getWorld().getPlayers()) {
+            killerTotal += Math.exp(-this.killerRounds.getOrDefault(player.getUuid(), 0) * 4);
+            vigilanteTotal += Math.exp(-this.vigilanteRounds.getOrDefault(player.getUuid(), 0) * 4);
+        }
+        var text = Text.literal("Role Weights:").formatted(Formatting.GRAY);
+        for (var player : source.getWorld().getPlayers()) {
+            text = text.append("\n").append(player.getDisplayName());
+            var killerRounds = this.killerRounds.getOrDefault(player.getUuid(), 0);
+            var killerWeight = Math.exp(-killerRounds * 4);
+            var killerPercent = killerWeight / killerTotal * 100;
+            var vigilanteRounds = this.vigilanteRounds.getOrDefault(player.getUuid(), 0);
+            var vigilanteWeight = Math.exp(-vigilanteRounds * 4);
+            var vigilantePercent = vigilanteWeight / vigilanteTotal * 100;
+            text.append(
+                    Text.literal("\n  Killer (").withColor(RoleAnnouncementText.KILLER.colour)
+                            .append(Text.literal("%d".formatted(killerRounds)).withColor(0x808080))
+                            .append(Text.literal("): ").withColor(RoleAnnouncementText.KILLER.colour))
+                            .append(Text.literal("%.2f%%".formatted(killerPercent)).withColor(0x808080))
+            );
+            text.append(
+                    Text.literal("\n  Vigilante (").withColor(RoleAnnouncementText.VIGILANTE.colour)
+                            .append(Text.literal("%d".formatted(vigilanteRounds)).withColor(0x808080))
+                            .append(Text.literal("): ").withColor(RoleAnnouncementText.VIGILANTE.colour))
+                            .append(Text.literal("%.2f%%".formatted(vigilantePercent)).withColor(0x808080))
+            );
+        }
+        var finalText = text;
+        source.sendFeedback(() -> finalText, false);
+    }
+
+    public void setKillerRounds(@NotNull ServerCommandSource source, @NotNull ServerPlayerEntity player, int times) {
+        if (times < 0) times = 0;
+        if (times == 0) this.killerRounds.remove(player.getUuid());
+        else this.killerRounds.put(player.getUuid(), times);
+        var finalTimes = times;
+        source.sendFeedback(() -> Text.literal("Set ").formatted(Formatting.GRAY)
+                .append(player.getDisplayName().copy().formatted(Formatting.YELLOW))
+                .append(Text.literal("'s Killer rounds to ").formatted(Formatting.GRAY))
+                .append(Text.literal("%d".formatted(finalTimes)).withColor(0x808080))
+                .append(Text.literal(".").formatted(Formatting.GRAY)), false);
+    }
+
+    public void setVigilanteRounds(@NotNull ServerCommandSource source, @NotNull ServerPlayerEntity player, int times) {
+        if (times < 0) times = 0;
+        if (times == 0) this.vigilanteRounds.remove(player.getUuid());
+        else this.vigilanteRounds.put(player.getUuid(), times);
+        var finalTimes = times;
+        source.sendFeedback(() -> Text.literal("Set ").formatted(Formatting.GRAY)
+                .append(player.getDisplayName().copy().formatted(Formatting.YELLOW))
+                .append(Text.literal("'s Vigilante rounds to ").formatted(Formatting.GRAY))
+                .append(Text.literal("%d".formatted(finalTimes)).withColor(0x808080))
+                .append(Text.literal(".").formatted(Formatting.GRAY)), false);
     }
 
     public int assignKillers(ServerWorld world, GameWorldComponent gameComponent, @NotNull List<ServerPlayerEntity> players, int killerCount) {
