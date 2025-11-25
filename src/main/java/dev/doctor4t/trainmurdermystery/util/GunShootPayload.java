@@ -59,7 +59,7 @@ public record GunShootPayload(int target) implements CustomPayload {
                 if (game.isInnocent(target) && !player.isCreative() && mainHandStack.isOf(revolver)) {
                     // backfire: if you kill an innocent you have a chance of shooting yourself instead
                     if (player.getRandom().nextFloat() <= game.getBackfireChance()) {
-                        GameFunctions.killPlayer(player, true, player, TMM.id("gun_shot"));
+                        GameFunctions.killPlayer(player, true, player, GameConstants.DeathReasons.GUN);
                         return;
                     }
 
@@ -75,7 +75,7 @@ public record GunShootPayload(int target) implements CustomPayload {
                         PlayerMoodComponent.KEY.get(player).setMood(0);
                     }, 4);
                 }
-                GameFunctions.killPlayer(target, true, player, TMM.id("gun_shot"));
+                GameFunctions.killPlayer(target, true, player, GameConstants.DeathReasons.GUN);
             }
 
             player.getWorld().playSound(null, player.getX(), player.getEyeY(), player.getZ(), TMMSounds.ITEM_REVOLVER_SHOOT, SoundCategory.PLAYERS, 5f, 1f + player.getRandom().nextFloat() * .1f - .05f);
