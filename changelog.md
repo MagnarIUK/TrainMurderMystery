@@ -13,9 +13,14 @@ The Last Voyage of the Harpy Express 1.3 - 1.21.1
   - resetPasteOffset: The offset at which the template should be pasted.
 - Moved weights, bounds, auto-start and backfire commands to a new /gameSettings command
 - Added a new role dividend setting to /gameSettings that allows setting custom killer and vigilante counts
+- Lowered the default dividend for both killers and vigilantes to 5 instead of 6
 - Fixed Derringers not replenishing on kill
 - Fixed Revolvers being able to be double fired
-- Tweaked the API to allow more modability
+- Tweaked the API to allow more modability (PunIsIntendeds)
+- Updated French translation (PadjokeJ)
+- Updated German translation (Lukas0094)
+- Updated Chinese translation (ZeroIcceBear)
+- Added Vietnamese translation (Vuyn)
 
 ------------------------------------------------------
 The Last Voyage of the Harpy Express 1.2.6 - 1.21.1
