@@ -51,9 +51,10 @@ public class KnifeItem extends Item implements ItemWithSkin {
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
         if (clickType == ClickType.RIGHT && otherStack.isEmpty())  {
-            Skin currentSkin = Skin.fromString(WatheCosmetics.getSkin(stack));
-            WatheCosmetics.setSkin(player.getUuid(), stack, Skin.getNext(currentSkin).getName());
-            player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.8F, 1.5f);
+            if (Wathe.isSupporter(player)) {
+                Skin currentSkin = Skin.fromString(WatheCosmetics.getSkin(stack));
+                WatheCosmetics.setSkin(player.getUuid(), stack, Skin.getNext(currentSkin).getName());
+            }
 
             return true;
         } else return false;
@@ -63,8 +64,10 @@ public class KnifeItem extends Item implements ItemWithSkin {
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         Skin skin = Skin.fromString(WatheCosmetics.getSkin(stack));
 
-        if (skin != null && skin != Skin.DEFAULT) {
-            tooltip.add(Text.literal(skin.tooltipName != null ? skin.tooltipName : TextUtils.formatValueString(skin.getName())).styled(style -> style.withColor(skin.getColor())));
+        if (skin != null) {
+            tooltip.add(Text.translatable("tip.skin").styled(style -> style.withColor(Colors.GRAY))
+                    .append(Text.literal(TextUtils.formatValueString(skin.tooltipName)).styled(style -> style.withColor(skin.getColor())))
+                    .append(Text.translatable("tip.change_skin").styled(style -> style.withColor(Colors.GRAY))));
         }
 
         super.appendTooltip(stack, context, tooltip, type);
@@ -101,7 +104,7 @@ public class KnifeItem extends Item implements ItemWithSkin {
     }
 
     public enum Skin {
-        DEFAULT(0xFF2B2632, "default"),
+        DEFAULT(Colors.LIGHT_GRAY, "Kitchen Knife"),
         CEREMONIAL(0xFFD98C28, "Ceremonial Dagger"),
         PICK(0xFF8D4A51, "Ice Pick");
 

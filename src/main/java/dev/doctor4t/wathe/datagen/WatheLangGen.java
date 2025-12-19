@@ -75,6 +75,8 @@ public class WatheLangGen extends FabricLanguageProvider {
         builder.add("tip.letter.room.twin_cabin", "your Twin Cabin");
         builder.add("tip.letter.tooltip1", "%s for your trip on the 1st of January 1923.");
         builder.add("tip.letter.tooltip2", "La Sirène wishes you a pleasant and safe voyage.");
+        builder.add("tip.skin", "Skin: ");
+        builder.add("tip.change_skin", " [Right-click to change (supporter only)]");
 
         builder.add("itemGroup.wathe.building", "Wathe: Building Blocks");
         builder.add("itemGroup.wathe.decoration", "Wathe: Decoration & Functional");
@@ -152,7 +154,7 @@ public class WatheLangGen extends FabricLanguageProvider {
                     bounds: Enable or disable game bounds that limit spectators to the play area.
                 """);
 
-        builder.add("commands.supporter_only", "Super silly supporter commands are reserved for Ko-Fi and YouTube members; if you wanna try them out, please consider supporting! <3");
+        builder.add("commands.supporter_only", "Super silly supporter commands are reserved for Patreon and YouTube members; if you wanna try them out, please consider supporting! <3");
 
         builder.add("wathe.midnightconfig.title", "The Last Voyage of the Harpy Express - Config");
         builder.add("wathe.midnightconfig.ultraPerfMode", "Ultra Performance Mode");

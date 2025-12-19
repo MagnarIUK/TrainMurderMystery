@@ -326,6 +326,8 @@
   "task.feel": "You feel like ",
   "task.outside": "getting some fresh air.",
   "task.sleep": "getting some sleep.",
+  "tip.skin": "Skin: ",
+  "tip.change_skin": " [Right-click to change (supporter only)]",
   "tip.cooldown": "On cooldown: %s",
   "tip.derringer.used": "Used: cannot be shot anymore, get a kill for another chance!",
   "tip.door.jammed": "This door is jammed and cannot be opened at the moment!",

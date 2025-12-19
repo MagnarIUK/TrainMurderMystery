@@ -381,7 +381,6 @@ public class WatheModelGen extends FabricModelProvider {
         generator.register(WatheItems.THROWN_GRENADE, SMALL_ITEM);
         generator.register(WatheItems.FIRECRACKER, SMALL_ITEM);
 
-        registerBuiltinModel(WatheItems.KNIFE, generator);
         for (KnifeItem.Skin value : KnifeItem.Skin.values()) {
             registerTemplateWeapon(KNIFE_TEMPLATE, value == KnifeItem.Skin.DEFAULT ? null : value.getName(), WatheItems.KNIFE, generator);
         }
@@ -412,14 +411,14 @@ public class WatheModelGen extends FabricModelProvider {
     }
 
     private void registerTemplateWeaponInventory(Model templateModel, @Nullable String name, Identifier itemId, ItemModelGenerator generator) {
-        Identifier inventoryTexture = (name == null ? getItemSubId(itemId, "_inventory") : getItemSubId(itemId, "_" + name));
+        Identifier inventoryTexture = (name == null ? getItemSubId(itemId, "") : getItemSubId(itemId, "_" + name));
         registerTemplateWeaponInventory(templateModel, name, itemId, inventoryTexture, generator);
     }
 
     private void registerTemplateWeaponInventory(Model templateModel, @Nullable String name, Identifier itemModelId, Identifier inventoryTexture, ItemModelGenerator generator) {
-        Identifier inventoryModelName = (name == null ? getItemSubId(itemModelId, "_inventory") : getItemSubId(itemModelId, "_" + name + "_inventory"));
+        Identifier inventoryModelName = (name == null ? getItemSubId(itemModelId, "") : getItemSubId(itemModelId, "_" + name));
 
-        Models.HANDHELD.upload(inventoryModelName, TextureMap.layer0(inventoryTexture), generator.writer); // this is actually the inventory model
+        KNIFE_TEMPLATE.upload(inventoryModelName, TextureMap.layer0(inventoryTexture), generator.writer); // this is actually the inventory model
     }
 
     public static Identifier getItemId(Identifier itemId) {

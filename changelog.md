@@ -22,6 +22,9 @@ Wathe 1.3 - 1.21.1
   - playArea: The play area outside which players will be eliminated.
   - resetTemplateArea: The template that will be copied over the play area in order to reset the map.
   - resetPasteOffset: The offset at which the template should be pasted.
+- Added knife skins for Patreon and YouTube supporters
+  - Can be changed by right-clicking a knife in the inventory
+  - Skins added: Ceremonial Dagger and Ice Pick
 - Moved weights, bounds, auto-start and backfire commands to a new /wathe:gameSettings command
 - Added a new role dividend setting to /wathe:gameSettings that allows setting custom killer and vigilante counts
 - Lowered the default dividend for both killers and vigilantes to 5 instead of 6
